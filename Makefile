@@ -1,17 +1,54 @@
-minhalib.o: $(SRC_DIR)/funcoes1.cpp $(SRC_DIR)/funcoes2.cpp $(INC_DIR)/minhalib.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/funcoes1.cpp -o $(OBJ_DIR)/funcoes1.o
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/funcoes2.cpp -o $(OBJ_DIR)/funcoes2.o
-	$(AR) rcs $(LIB_DIR)/$@ $(OBJ_DIR)/funcoes1.o $(OBJ_DIR)/funcoes2.o
-	@echo "biblioteca estatica criada em ..."
 
-minhalib.so: $(SRC_DIR)/funcoes1.cpp $(SRC_DIR)/funcoes2.cpp $(INC_DIR)/minhalib.h
-	$(CC) $(CFLAGS) -fPIC -c $(SRC_DIR)/funcoes1.cpp -o $(OBJ_DIR)/funcoes1.o
-	$(CC) $(CFLAGS) -fPIC -c $(SRC_DIR)/funcoes2.cpp -o $(OBJ_DIR)/funcoes2.o
-	$(CC) -shared -fPIC -o $(LIB_DIR)/$@ $(OBJ_DIR)/funcoes1.o $(OBJ_DIR)/funcoes2.o
-	@echo "biblioteca dinamica criada em"
+INC_DIR=./include
+SRC_DIR=./src
+OBJ_DIR=./build
+BIN_DIR=./bin
+DOC_DIR=./doc
+LIB_DIR=./lib
+
+RM = rm -rf
+
+AR = ar
+
+CC = g++
+
+CPPFLAGS = -Wall -pedantic -ansi -std=c++11
+
+OBJS_E = $(LIB_DIR)/israel.a $(INC_DIR)/calcula.hpp $(SRC_DIR)/calcula.cpp $(SRC_DIR)/main.cpp
+
+OBJS_D = $(LIB_DIR)/israel.so $(INC_DIR)/calcula.hpp $(SRC_DIR)/calcula.cpp $(SRC_DIR)/main.cpp
+
+geometria_dinamica: clean dir $(OBJS_D)
+	$(CC) $(CPPFLAGS) -lm -I$(INC_DIR) $(OBJS_D) -o $@
+
+geometria_estatica: clean dir $(OBJS_E)
+	$(CC) $(CPPFLAGS) -lm -I$(INC_DIR) $(SRC_DIR)/main.cpp $(INC_DIR)/calcula.hpp $(SRC_DIR)/calcula.cpp $(LIB_DIR)/israel.a -o $@
 
 
-prog_estatico:
-	$(CC) $(CFLAGS) $(SRC_DIR)/main.cpp $(LIB_DIR)/minhalib.a -o $(OBJ_DIR)/$@
-prog_dinamico:
-	$(CC) $(CFLAGS) $(SRC_DIR)/main.cpp $(LIB_DIR)/minhalib.a -o $(OBJ_DIR)/$@
+
+$(LIB_DIR)/israel.a: $(SRC_DIR)/israel.cpp $(INC_DIR)/israel.hpp
+	$(CC) $(CPPFLAGS) -lm -I$(INC_DIR) -c $(SRC_DIR)/israel.cpp -o $(OBJ_DIR)/israel.o 
+	$(AR) rcs $(LIB_DIR)/israel.a $(OBJ_DIR)/israel.o
+
+$(LIB_DIR)/israel.so: $(SRC_DIR)/israel.cpp $(INC_DIR)/israel.hpp
+	$(CC) $(CFLAGS) -fPIC -lm -I$(INC_DIR) -c $(SRC_DIR)/israel.cpp -o $(OBJ_DIR)/israel.o
+	$(CC) -shared -fPIC -o $(LIB_DIR)/israel.so
+
+
+
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp
+	$(CC) -c $(CPPFLAGS) -lm -I$(INC_DIR)/ -o $@ $<
+
+
+doxy:
+	$(RM) $(DOC_DIR)/*
+	doxygen Doxyfile
+
+dir:
+	mkdir -p bin build doc lib
+
+clean: dir
+	$(RM) $(BIN_DIR)/*
+	$(RM) $(OBJ_DIR)/*
+	$(RM) $(DOC_DIR)/*
+	$(RM) $(LIB_DIR)/*

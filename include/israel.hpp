@@ -32,7 +32,6 @@ namespace geometria{
 			void setBase(float _base);
 		private:
 			float base;
-			float altura;
 	};
 
 	class Circulo{
@@ -72,7 +71,7 @@ namespace geometria{
 		public:
 			Esfera();
 			~Esfera() = default;
-			Esfera(float _base): base(_base){}
+			Esfera(float _raio): raio(_raio){}
 
 			float area();
 			float volume();
@@ -81,8 +80,7 @@ namespace geometria{
 			float getRaio();
 
 		private:
-			float base;
-
+			float raio;
 	};
 
 	class Cubo{
@@ -96,16 +94,17 @@ namespace geometria{
 
 			float getBase();
 			void setBase(float _base);
+		
 		private:
 			float base;
 
 	};
 
-	class Piramede{
+	class Piramide{
 		public:
-			Piramede();
-			~Piramede() = default;
-			Piramede(float _base, float _altura): base(_base), altura(_altura){}
+			Piramide();
+			~Piramide() = default;
+			Piramide(float _base, float _altura): base(_base), altura(_altura){}
 
 			float volume();
 			float area();
